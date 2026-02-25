@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Drogas Vilela">
+    <title>Calculadora Paulo Vilela Pro</title>
+    <style>
+        :root { 
+            --nora: #d93025; --roc: #f9ab00; --dex: #1a73e8; 
+            --nitroP: #9c27b0; --nitroG: #2e7d32; 
+            --dobuta: #e91e63; --dopa: #ff5722; --prop: #424242; 
+            --remi: #607d8b; --milri: #795548; --mida: #673ab7; 
+            --fenta: #3f51b5; --feni: #009688; --morfi: #7e57c2; 
+            --esmo: #03a9f4; --alfe: #00bcd4; --cisa: #4caf50; --bg: #f2f4f7; 
+        }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; overflow-x: hidden; }
+        .page { display: none; width: 100%; min-height: 100vh; padding: 20px; box-sizing: border-box; flex-direction: column; }
+        .active { display: flex !important; }
+        #page-welcome { background: white; align-items: center; justify-content: center; text-align: center; }
+        .welcome-title { font-size: 1.2rem; font-weight: 800; color: #333; margin-bottom: 10px; text-transform: uppercase; padding: 0 15px; }
+        .welcome-author { font-size: 1.1rem; color: #666; margin-bottom: 40px; letter-spacing: 2px; }
+        .enter-btn { padding: 18px 60px; background: #1a73e8; color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; width: 80%; }
+        .search-container { position: sticky; top: 10px; z-index: 10; background: var(--bg); padding-bottom: 10px; }
+        #search-input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #ddd; font-size: 16px; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        #menu-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .menu-btn { padding: 18px 10px; border: none; border-radius: 15px; font-weight: bold; color: white; display: flex; flex-direction: column; align-items: center; gap: 8px; text-transform: uppercase; font-size: 0.65rem; }
+        .header-calc { display: flex; align-items: center; margin-bottom: 15px; gap: 10px; }
+        .back-btn { background: #fff; border: 1px solid #ddd; padding: 10px 15px; border-radius: 10px; font-weight: bold; }
+        .card { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 10px; }
+        label { font-size: 10px; font-weight: 800; color: #718096; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 16px; margin-bottom: 8px; box-sizing: border-box; background: #f8fafc; }
+        .result-box { background: #f0fff4; padding: 12px; border-radius: 15px; text-align: center; border: 1px solid #c6f6d5; flex: 1; }
+        .result-label { font-size: 8px; font-weight: bold; color: #2f855a; display: block; margin-bottom: 3px; }
+        .result-value { font-size: 1.3rem; color: #22543d; font-weight: 900; }
+        .clin-notes { background: #fffaf0; padding: 15px; border-radius: 15px; font-size: 11px; border-left: 5px solid #ed8936; line-height: 1.4; color: #744210; margin-top: 5px; }
+        .clin-notes b { display: block; border-bottom: 1px solid #ed8936; margin-bottom: 5px; }
+        .row { display: flex; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="page-welcome" class="page active">
+        <div class="welcome-title">CÁLCULO DE INFUSÃO EM ANESTESIA</div>
+        <div class="welcome-author">DR. PAULO VILELA</div>
+        <button class="enter-btn" onclick="go('page-home')">ENTRAR</button>
+    </div>
+
+    <div id="page-home" class="page">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="🔍 Procurar droga..." onkeyup="filterDrugs()">
+        </div>
+        <div id="menu-list">
+            <button class="menu-btn" style="background:var(--nora)" data-name="noradrenalina nora" onclick="go('page-nora')"><span>🧪</span>NORA</button>
+            <button class="menu-btn" style="background:var(--prop)" data-name="propofol" onclick="go('page-prop')"><span>🌑</span>PROPOFOL</button>
+            <button class="menu-btn" style="background:var(--remi)" data-name="remifentanil remi" onclick="go('page-remi')"><span>💉</span>REMI</button>
+            <button class="menu-btn" style="background:var(--alfe)" data-name="alfentanil alfe rapifen" onclick="go('page-alfe')"><span>⚡</span>ALFE</button>
+            <button class="menu-btn" style="background:var(--fenta)" data-name="fentanil fentanila" onclick="go('page-fenta')"><span>💎</span>FENTANIL</button>
+            <button class="menu-btn" style="background:var(--cisa)" data-name="cisatracurio cisa nimbium" onclick="go('page-cisa')"><span>🍃</span>CISA</button>
+            <button class="menu-btn" style="background:var(--roc)" data-name="rocuronio roc" onclick="go('page-roc')"><span>💪</span>ROC</button>
+            <button class="menu-btn" style="background:var(--esmo)" data-name="esmolol brevibloc" onclick="go('page-esmo')"><span>💙</span>ESMOLOL</button>
+            <button class="menu-btn" style="background:var(--feni)" data-name="fenilefrina feni" onclick="go('page-feni')"><span>💧</span>FENILEFRINA</button>
+            <button class="menu-btn" style="background:var(--dex)" data-name="dexmedetomidina dex" onclick="go('page-dex')"><span>🌀</span>DEX</button>
+            <button class="menu-btn" style="background:var(--mida)" data-name="midazolam mida dormonid" onclick="go('page-mida')"><span>💊</span>MIDA</button>
+            <button class="menu-btn" style="background:var(--morfi)" data-name="morfina dimorf" onclick="go('page-morfi')"><span>🧬</span>MORFINA</button>
+            <button class="menu-btn" style="background:var(--milri)" data-name="milrinona primacor" onclick="go('page-milri')"><span>🫀</span>MILRI</button>
+            <button class="menu-btn" style="background:var(--dobuta)" data-name="dobutamina" onclick="go('page-dobuta')"><span>❤️</span>DOBUTA</button>
+            <button class="menu-btn" style="background:var(--dopa)" data-name="dopamina" onclick="go('page-dopa')"><span>⚡</span>DOPA</button>
+            <button class="menu-btn" style="background:var(--nitroP)" data-name="nitroprussiato nitro-p" onclick="go('page-nitroP')"><span>🟣</span>NITRO-P</button>
+            <button class="menu-btn" style="background:var(--nitroG)" data-name="nitroglicerina tridil" onclick="go('page-nitroG')"><span>🟢</span>NITRO-G</button>
+        </div>
+    </div>
+
+    <div id="page-nora" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--nora)">NORADRENALINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Massa (mg)</label><input type="number" id="nora_m" value="4"></div><div style="margin-left:10px"><label>Soro (mL)</label><input type="number" id="nora_v" value="250"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="nora_d" value="0.1" oninput="calcAll()"><div class="result-box"><span id="res_nora" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Vasopressor Alfa-1 potente. <br>• <b>Dose:</b> 0,05-2 mcg/kg/min. <br>• <b>Observação:</b> Primeira linha no choque séptico. Requer acesso central.</div>
+    </div>
+
+    <div id="page-prop" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--prop)">PROPOFOL</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><label>Conc (%)</label><select id="prop_c" onchange="calcAll()"><option value="10">1% (10mg/mL)</option><option value="20">2% (20mg/mL)</option></select><label>Indução (mg/kg)</label><input type="number" id="prop_i" value="1.5" oninput="calcAll()"><label>Manutenção (mcg/kg/min)</label><input type="number" id="prop_m" value="50" oninput="calcAll()"><div class="row"><div class="result-box"><span class="result-label">BOLUS</span><span id="res_prop_i" class="result-value">---</span><small>mL</small></div><div class="result-box"><span class="result-label">VAZÃO</span><span id="res_prop_v" class="result-value">---</span><small>mL/h</small></div></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Hipnótico GABAérgico de rápida ação. <br>• <b>Dose:</b> 50-200 mcg/kg/min. <br>• <b>Alerta:</b> Hipotensão e bradicardia. Monitorar síndrome da infusão.</div>
+    </div>
+
+    <div id="page-remi" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--remi)">REMIFENTANIL</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Massa (mg)</label><input type="number" id="remi_m" value="2"></div><div style="margin-left:10px"><label>Soro (mL)</label><input type="number" id="remi_v" value="40"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="remi_d" value="0.2" oninput="calcAll()"><div class="result-box"><span id="res_remi" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Opioide metabolizado por esterases. <br>• <b>Dose:</b> 0,1-0,5 mcg/kg/min. <br>• <b>Observação:</b> Meia-vida context-sensitive constante (~4 min).</div>
+    </div>
+
+    <div id="page-alfe" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--alfe)">ALFENTANIL</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Massa (mg)</label><input type="number" id="alfe_m" value="5"></div><div style="margin-left:10px"><label>Soro (mL)</label><input type="number" id="alfe_v" value="10"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="alfe_d" value="0.5" oninput="calcAll()"><div class="result-box"><span id="res_alfe" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Início ultra-rápido (~1 min). <br>• <b>Dose:</b> 0,5-2 mcg/kg/min. <br>• <b>Observação:</b> Ideal para estímulos breves e intensos.</div>
+    </div>
+
+    <div id="page-fenta" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--fenta)">FENTANIL</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Massa (mcg)</label><input type="number" id="fenta_m" value="2500"></div><div style="margin-left:10px"><label>Soro (mL)</label><input type="number" id="fenta_v" value="50"></div></div><label>Dose (mcg/kg/h)</label><input type="number" id="fenta_d" value="2" oninput="calcAll()"><div class="result-box"><span id="res_fenta" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Opioide lipofílico potente. <br>• <b>Dose:</b> 1-5 mcg/kg/h. <br>• <b>Alerta:</b> Risco de acúmulo e depressão respiratória tardia.</div>
+    </div>
+
+    <div id="page-cisa" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--cisa)">CISATRACÚRIO</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Conc (mg/mL)</label><input type="number" id="cisa_c" value="2"></div><div style="margin-left:10px"><label>Ataque (mg/kg)</label><input type="number" id="cisa_a" value="0.15"></div></div><label>Manut (mg/kg/h)</label><input type="number" id="cisa_d" value="0.1" oninput="calcAll()"><div class="row"><div class="result-box"><span class="result-label">BOLUS</span><span id="res_cisa_b" class="result-value">---</span></div><div class="result-box"><span class="result-label">VAZÃO</span><span id="res_cisa_v" class="result-value">---</span></div></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Eliminação de Hoffman. <br>• <b>Indução:</b> 0,15 mg/kg. <br>• <b>Manut:</b> 0,06-0,12 mg/kg/h. Útil em renais/hepáticos.</div>
+    </div>
+
+    <div id="page-roc" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--roc)">ROCURÔNIO</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Conc (mg/mL)</label><input type="number" id="roc_c" value="10"></div><div style="margin-left:10px"><label>Ataque (mg/kg)</label><input type="number" id="roc_a" value="0.6"></div></div><label>Manut (mg/kg/h)</label><input type="number" id="roc_m" value="0.6" oninput="calcAll()"><div class="row"><div class="result-box"><span class="result-label">BOLUS</span><span id="res_roc_b" class="result-value">---</span></div><div class="result-box"><span class="result-label">VAZÃO</span><span id="res_roc_v" class="result-value">---</span></div></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> BNM de início rápido. <br>• <b>Indução:</b> 0,6-1,2 mg/kg. <br>• <b>Manut:</b> 0,3-0,6 mg/kg/h. Reversível com Sugammadex.</div>
+    </div>
+
+    <div id="page-esmo" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--esmo)">ESMOLOL</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="esmo_m" value="2500"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="esmo_v" value="250"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="esmo_d" value="50" oninput="calcAll()"><div class="result-box"><span id="res_esmo" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Beta-bloqueador ultra-curto. <br>• <b>Dose:</b> 50-300 mcg/kg/min. <br>• <b>Observação:</b> Útil em taquicardia e hipertensão agudas.</div>
+    </div>
+
+    <div id="page-feni" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--feni)">FENILEFRINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="feni_m" value="10"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="feni_v" value="100"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="feni_d" value="0.5" oninput="calcAll()"><div class="result-box"><span id="res_feni" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Alfa-1 puro. <br>• <b>Dose:</b> 0,1-1,5 mcg/kg/min. <br>• <b>Efeito:</b> Vasoconstrição com bradicardia reflexa.</div>
+    </div>
+
+    <div id="page-dex" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--dex)">DEXMEDETOMIDINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mcg</label><input type="number" id="dex_m" value="200"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="dex_v" value="50"></div></div><label>Dose (mcg/kg/h)</label><input type="number" id="dex_d" value="0.5" oninput="calcAll()"><div class="result-box"><span id="res_dex" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Alfa-2 central potente. <br>• <b>Dose:</b> 0,2-1,4 mcg/kg/h. <br>• <b>Vantagem:</b> Sedação sem depressão respiratória.</div>
+    </div>
+
+    <div id="page-mida" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--mida)">MIDAZOLAM</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="mida_m" value="50"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="mida_v" value="50"></div></div><label>Dose (mg/kg/h)</label><input type="number" id="mida_d" value="0.1" oninput="calcAll()"><div class="result-box"><span id="res_mida" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Benzodiazepínico amnético. <br>• <b>Dose:</b> 0,05-0,2 mg/kg/h. <br>• <b>Alerta:</b> Acúmulo de metabólitos em insuficiência renal.</div>
+    </div>
+
+    <div id="page-morfi" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--morfi)">MORFINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="morfi_m" value="50"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="morfi_v" value="50"></div></div><label>Dose (mg/kg/h)</label><input type="number" id="morfi_d" value="0.01" oninput="calcAll()"><div class="result-box"><span id="res_morfi" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Opioide natural potente. <br>• <b>Dose:</b> 0,01-0,04 mg/kg/h. <br>• <b>Alerta:</b> Liberação de histamina e hipotensão.</div>
+    </div>
+
+    <div id="page-milri" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--milri)">MILRINONA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="milri_m" value="10"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="milri_v" value="50"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="milri_d" value="0.375" oninput="calcAll()"><div class="result-box"><span id="res_milri" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Inodilatador (PDE-3). <br>• <b>Dose:</b> 0,375-0,75 mcg/kg/min. <br>• <b>Observação:</b> Reduz RVP e aumenta contratilidade.</div>
+    </div>
+
+    <div id="page-dobuta" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--dobuta)">DOBUTAMINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="dobuta_m" value="250"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="dobuta_v" value="250"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="dobuta_d" value="5" oninput="calcAll()"><div class="result-box"><span id="res_dobuta" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Inotrópico Beta-1. <br>• <b>Dose:</b> 2-20 mcg/kg/min. <br>• <b>Observação:</b> Aumenta consumo de O2 miocárdico.</div>
+    </div>
+
+    <div id="page-dopa" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--dopa)">DOPAMINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="dopa_m" value="50"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="dopa_v" value="250"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="dopa_d" value="5" oninput="calcAll()"><div class="result-box"><span id="res_dopa" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Dose-dependente (Dopa/Beta/Alfa). <br>• <b>Dose:</b> 2-20 mcg/kg/min. <br>• <b>Observação:</b> Pode causar taquiarritmias severas.</div>
+    </div>
+
+    <div id="page-nitroP" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--nitroP)">NITROPRUSSIATO</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="nitroP_m" value="50"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="nitroP_v" value="250"></div></div><label>Dose (mcg/kg/min)</label><input type="number" id="nitroP_d" value="0.5" oninput="calcAll()"><div class="result-box"><span id="res_nitroP" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Vasodilatador misto potente. <br>• <b>Dose:</b> 0,3-10 mcg/kg/min. <br>• <b>Observação:</b> Fotossensível. Risco de intoxicação por cianeto.</div>
+    </div>
+
+    <div id="page-nitroG" class="page">
+        <div class="header-calc"><button class="back-btn" onclick="go('page-home')">←</button><h3 style="color:var(--nitroG)">NITROGLICERINA</h3></div>
+        <div class="card"><label>PESO (kg)</label><input type="number" class="peso" oninput="calcAll(this.value)"></div>
+        <div class="card"><div class="row"><div><label>Mg</label><input type="number" id="nitroG_m" value="50"></div><div style="margin-left:10px"><label>Soro</label><input type="number" id="nitroG_v" value="250"></div></div><label>Dose (mcg/min)</label><input type="number" id="nitroG_d" value="10" oninput="calcAll()"><div class="result-box"><span id="res_nitroG" class="result-value">---</span><small>mL/h</small></div></div>
+        <div class="clin-notes"><b>NOTAS CLÍNICAS:</b> Vasodilatador venoso. <br>• <b>Dose:</b> 5-100 mcg/min. <br>• <b>Observação:</b> Droga de escolha na isquemia miocárdica.</div>
+    </div>
+
+<script>
+    function go(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function filterDrugs() {
+        const input = document.getElementById('search-input').value.toLowerCase();
+        const buttons = document.querySelectorAll('.menu-btn');
+        buttons.forEach(btn => {
+            const name = btn.getAttribute('data-name');
+            btn.style.display = name.includes(input) ? "flex" : "none";
+        });
+    }
+
+    function calcAll(val) {
+        if(val !== undefined) document.querySelectorAll('.peso').forEach(i => i.value = val);
+        const peso = parseFloat(document.querySelector('.peso').value);
+        if(!peso || peso <= 0) return;
+
+        const g = (id) => {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) : 0;
+        };
+        const s = (id, txt) => { const el = document.getElementById(id); if(el) el.innerText = txt; };
+
+        // mcg/kg/min
+        ['nora','dobuta','dopa','nitroP','remi','milri','feni','esmo','alfe'].forEach(d => {
+            const elM = document.getElementById(d+'_m');
+            if(elM) s('res_'+d, ((g(d+'_d') * peso * 60) / ((g(d+'_m') * 1000) / g(d+'_v'))).toFixed(1));
+        });
+        
+        // mg/kg/h ou mcg/kg/h
+        ['mida','fenta','dex','morfi'].forEach(d => {
+            const elM = document.getElementById(d+'_m');
+            if(elM) s('res_'+d, ((g(d+'_d') * peso) / (g(d+'_m') / g(d+'_v'))).toFixed(1));
+        });
+
+        // Especificos
+        const nG = document.getElementById('nitroG_m');
+        if(nG) s('res_nitroG', ((g('nitroG_d') * 60) / ((g('nitroG_m') * 1000) / g('nitroG_v'))).toFixed(1));
+        
+        const pC = document.getElementById('prop_c');
+        if(pC) {
+            let pc = g('prop_c'); 
+            s('res_prop_i', ((g('prop_i')*peso)/pc).toFixed(1)); 
+            s('res_prop_v', ((g('prop_m')*peso*60)/(pc*1000)).toFixed(1));
+        }
+
+        const rC = document.getElementById('roc_c');
+        if(rC) {
+            let rc = g('roc_c'); 
+            s('res_roc_b', ((g('roc_a')*peso)/rc).toFixed(1)); 
+            s('res_roc_v', ((g('roc_m')*peso)/rc).toFixed(1));
+        }
+        
+        if(document.getElementById('cisa_c')){
+            let cc = g('cisa_c');
+            s('res_cisa_b', ((g('cisa_a')*peso)/cc).toFixed(1));
+            s('res_cisa_v', ((g('cisa_d')*peso)/cc).toFixed(1));
+        }
+    }
+</script>
+</body>
+</html>
